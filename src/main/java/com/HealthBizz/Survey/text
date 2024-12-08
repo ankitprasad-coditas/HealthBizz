@@ -1,0 +1,157 @@
+| Entity | Columns | Relationships |
+| --- | --- | --- |
+| **User** | id, email, password, role (SUPER_ADMIN, ADMIN, STATE_HEAD, DISTRICT_HEAD, TALUKA_HEAD, DATA_COLLECTOR) |  |
+| **Admin** | id, user_id (FK), country | One-To-One with User |
+| **State** | id, admin_id (FK), name | Many-To-One with Admin |
+| **StateHead** | id, state_id (FK), user_id (FK) | Many-To-One with State and User |
+| **District** | id, state_id (FK), name | Many-To-One with State |
+| **DistrictHead** | id, district_id (FK), user_id (FK) | Many-To-One with District and User |
+| **Taluka** | id, district_id (FK), name | Many-To-One with District |
+| **TalukaHead** | id, taluka_id (FK), user_id (FK) | Many-To-One with Taluka and User |
+| **CityVillage** | id, taluka_id (FK), name | Many-To-One with Taluka |
+| **DataCollector** | id, city_village_id (FK), user_id (FK) | Many-To-One with CityVillage and User |
+| **CollectedData** | id, data_collector_id (FK), ... (other data columns) | Many-To-One with DataCollector |
+| **ApprovalHistory** | id, collected_data_id (FK), approver_id (FK), status (APPROVED, REJECTED, EDITED) | Many-To-One with CollectedData and User |
+
+
+
+PS C:\Users\prasa\Downloads\Assignment_8> & C:/Users/prasa/AppData/Local/Programs/Python/Python313/python.exe c:/Users/prasa/Downloads/Assignment_8/ai.py
+ Quite a comprehensive healthcare business application you're building with Java Spring Boot! I'll break down the key aspects, provide guidance, and offer some implementation suggestions.
+
+**Hierarchy and Entity Relationships**
+
+1. **Super Admin (Owner)**
+        * Has many **Admins (Country)**
+2. **Admin (Country)**
+        * Has many **States**
+        * Each State has one **State Head** (appointed by Admin)
+3. **State**
+        * Has many **Districts**
+        * Each District has one **District Head** (appointed by State Head)
+4. **District**
+        * Has many **Talukas**
+        * Each Taluka has one **Taluka Head** (appointed by District Head)
+5. **Taluka**
+        * Has many **City/Villages**
+        * Each City/Village has many **Data Collectors (Surveyors)** (appointed by Taluka Head)
+6. **Data Collector (Surveyor)**
+        * Collects data, which is reviewed and approved by the hierarchy (Taluka Head → District Head → State Head)
+
+**Implementation Suggestions**
+
+### 1. Database Design
+
+Use an ORM (Object-Relational Mapping) tool like Spring Boot's default **Hibernate** or **JPA (Java Persistence API)**. Design your database tables with the following entities and relationships:
+
+| Entity | Columns | Relationships |
+| --- | --- | --- |
+| **User** | id, email, password, role (SUPER_ADMIN, ADMIN, STATE_HEAD, DISTRICT_HEAD, TALUKA_HEAD, DATA_COLLECTOR) |  |
+| **Admin** | id, user_id (FK), country | One-To-One with User |
+| **State** | id, admin_id (FK), name | Many-To-One with Admin |
+| **StateHead** | id, state_id (FK), user_id (FK) | Many-To-One with State and User |
+| **District** | id, state_id (FK), name | Many-To-One with State |
+| **DistrictHead** | id, district_id (FK), user_id (FK) | Many-To-One with District and User |
+| **Taluka** | id, district_id (FK), name | Many-To-One with District |
+| **TalukaHead** | id, taluka_id (FK), user_id (FK) | Many-To-One with Taluka and User |
+| **CityVillage** | id, taluka_id (FK), name | Many-To-One with Taluka |
+| **DataCollector** | id, city_village_id (FK), user_id (FK) | Many-To-One with CityVillage and User |
+| **CollectedData** | id, data_collector_id (FK), ... (other data columns) | Many-To-One with DataCollector |
+| **ApprovalHistory** | id, collected_data_id (FK), approver_id (FK), status (APPROVED, REJECTED, EDITED) | Many-To-One with CollectedData and User |
+
+### 2. Handling District Head Departure
+
+* **Soft Delete**: Implement a soft delete mechanism for the departing District Head's user account. This will maintain the integrity of the existing relationships.
+* **Reassign Talukas**: Provide an interface for the State Head to reassign the Talukas (and their Heads) to another District Head.
+
+### 3. Admin Registration and Password Setup
+
+* **Email-based Password Setup**:
+        1. When a higher authority registers a new user, generate a **token** (e.g., UUID) and store it with the new user's email.
+        2. Send an email to the new user with a link containing the token (e.g., `https://your-app.com/setup-password?token=<UUID>`).
+        3. When the new user clicks the link, verify the token and prompt them to set their password.
+        4. Hash and store the new password with the user's account.
+
+**Example Code Snippets (Java Spring Boot)**
+
+### User Entity
+```java
+@Entity
+public class User {
+
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
+
+  private String email;
+  private String password;
+  private Role role;
+
+  // Getters and Setters
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
+
+  private String email;
+  private String password;
+  private Role role;
+
+  // Getters and Setters
+  private Long id;
+
+  private String email;
+  private String password;
+  private Role role;
+
+  // Getters and Setters
+  private String email;
+  private String password;
+  private Role role;
+
+  // Getters and Setters
+  private String password;
+  private Role role;
+
+  // Getters and Setters
+  private Role role;
+
+  // Getters and Setters
+
+  // Getters and Setters
+  // Getters and Setters
+}
+```
+
+### Admin Registration with Password Setup
+
+### Admin Registration with Password Setup
+### Admin Registration with Password Setup
+```java
+```java
+@Service
+@Service
+public class UserService {
+
+  @Autowired
+  @Autowired
+  private UserRepository userRepository;
+
+  @Autowired
+  private EmailService emailService;
+
+  public void registerAdmin(AdminDTO adminDTO) {
+    User user = new User(adminDTO.getEmail(), Role.ADMIN);
+    user.setToken(UUID.randomUUID().toString()); // Generate token
+    userRepository.save(user);
+
+    // Send email with password setup link
+    emailService.sendPasswordSetupEmail(user.getEmail(), user.getToken());
+  }
+}
+```
+
+### Password Setup Controller
+```java
+@RestController
+public class PasswordSetupController {
+
+  @Autowired
+  private UserService userService;
