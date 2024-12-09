@@ -1,5 +1,6 @@
 package com.HealthBizz.Survey.entity;
 
+import com.HealthBizz.Survey.reporsitory.UserRepo;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,7 +23,7 @@ public class State {
     private String name;
 
     @ManyToOne
-    @JoinColumn(name = "admin_id", nullable = false)
-    private Admin admin;
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
 }

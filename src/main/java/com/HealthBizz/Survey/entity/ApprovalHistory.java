@@ -1,3 +1,4 @@
+/*
 package com.HealthBizz.Survey.entity;
 
 import com.HealthBizz.Survey.enums.Status;
@@ -28,3 +29,4 @@ public class ApprovalHistory {
     @Enumerated(EnumType.STRING)
     private Status status; // Enum for status
 }
+*/

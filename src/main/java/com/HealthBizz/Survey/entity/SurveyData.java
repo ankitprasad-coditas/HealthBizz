@@ -13,36 +13,29 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CollectedData {
+public class SurveyData {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "data_collector_id", nullable = false)
-    private DataCollector dataCollector;
+    @JoinColumn(name = "user_id", nullable = false)
+    private User dataCollector;
 
-    // Business details
     private String businessName;
     private String businessType;
     private String address;
     private String city;
     private String state;
-    private String zipCode;
     private String contactNumber;
     private String email;
 
-    // Facility details
+    private String headDoctor;
     private int yearEstablished;
-    private String operatingHours;
     private boolean emergencyServices;
-    private String specialties;
     private int numberOfBeds;
-    private int numberOfConsultationRooms;
     private int numberOfDoctors;
-    private int numberOfNurses;
-    private int numberOfAdministrativeStaff;
-
 
     private LocalDateTime dateOfSurvey;
+
 }
