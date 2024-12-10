@@ -1,7 +1,5 @@
-package com.HealthBizz.Survey.config;
+package com.HealthBizz.Survey.security;
 
-import com.HealthBizz.Survey.service.CustomUserDetailsService;
-import com.HealthBizz.Survey.service.JwtAuthFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

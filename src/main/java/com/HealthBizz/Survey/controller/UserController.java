@@ -4,7 +4,7 @@ import com.HealthBizz.Survey.dto.ApiResponseDto;
 import com.HealthBizz.Survey.dto.AuthRequestDto;
 import com.HealthBizz.Survey.dto.TokenResponseDto;
 import com.HealthBizz.Survey.dto.UserDto;
-import com.HealthBizz.Survey.service.AuthService;
+import com.HealthBizz.Survey.security.AuthService;
 import com.HealthBizz.Survey.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

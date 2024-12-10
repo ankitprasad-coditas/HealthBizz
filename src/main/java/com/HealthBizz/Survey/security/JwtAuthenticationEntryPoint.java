@@ -1,4 +1,4 @@
-package com.HealthBizz.Survey.config;
+package com.HealthBizz.Survey.security;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

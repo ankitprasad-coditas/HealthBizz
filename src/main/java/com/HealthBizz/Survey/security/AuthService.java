@@ -1,4 +1,4 @@
-package com.HealthBizz.Survey.service;
+package com.HealthBizz.Survey.security;
 
 import com.HealthBizz.Survey.dto.AuthRequestDto;
 import com.HealthBizz.Survey.dto.TokenResponseDto;

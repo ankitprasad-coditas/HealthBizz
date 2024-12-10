@@ -1,4 +1,4 @@
-package com.HealthBizz.Survey.service;
+package com.HealthBizz.Survey.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
