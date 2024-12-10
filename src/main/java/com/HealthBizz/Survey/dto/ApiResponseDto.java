@@ -1,12 +1,7 @@
 package com.HealthBizz.Survey.dto;
 
-import lombok.Getter;
-import lombok.Setter;
-
 import java.time.Instant;
 
-@Getter
-@Setter
 public class ApiResponseDto<T> {
 
     private T data;
@@ -28,5 +23,37 @@ public class ApiResponseDto<T> {
         this.status = status;
         this.message = message;
         this.timeStamp = Instant.now();
+    }
+
+    public T getData() {
+        return data;
+    }
+
+    public void setData(T data) {
+        this.data = data;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public Instant getTimeStamp() {
+        return timeStamp;
+    }
+
+    public void setTimeStamp(Instant timeStamp) {
+        this.timeStamp = timeStamp;
     }
 }

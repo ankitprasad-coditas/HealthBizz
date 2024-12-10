@@ -9,21 +9,18 @@ import java.util.Set;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-public class District {
+public class Country {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "state_id", nullable = false)
-    private State state;
-
     private String name;
 
-    @OneToMany(mappedBy = "district")
-    private Set<Taluka> talukas;
+    @OneToMany(mappedBy = "country")
+    Set<State> states;
 
-    @OneToMany(mappedBy = "district")
+    @OneToMany(mappedBy = "country")
     private Set<User> users;
 
     public Long getId() {
@@ -34,14 +31,6 @@ public class District {
         this.id = id;
     }
 
-    public State getState() {
-        return state;
-    }
-
-    public void setState(State state) {
-        this.state = state;
-    }
-
     public String getName() {
         return name;
     }
@@ -50,12 +39,12 @@ public class District {
         this.name = name;
     }
 
-    public Set<Taluka> getTalukas() {
-        return talukas;
+    public Set<State> getStates() {
+        return states;
     }
 
-    public void setTalukas(Set<Taluka> talukas) {
-        this.talukas = talukas;
+    public void setStates(Set<State> states) {
+        this.states = states;
     }
 
     public Set<User> getUsers() {
@@ -66,4 +55,3 @@ public class District {
         this.users = users;
     }
 }
-

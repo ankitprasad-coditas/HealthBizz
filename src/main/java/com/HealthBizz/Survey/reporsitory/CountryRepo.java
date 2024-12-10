@@ -1,9 +1,9 @@
 package com.HealthBizz.Survey.reporsitory;
 
-import com.HealthBizz.Survey.entity.SurveyData;
+import com.HealthBizz.Survey.entity.Country;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface SurveyDataRepo extends JpaRepository<SurveyData,Long> {
+public interface CountryRepo extends JpaRepository<Country, Long> {
 }

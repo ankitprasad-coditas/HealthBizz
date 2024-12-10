@@ -132,7 +132,7 @@ public class UserService {
 
   @Autowired
   @Autowired
-  private UserRepository userRepository;
+  private UserRepository userRepo;
 
   @Autowired
   private EmailService emailService;
@@ -140,7 +140,7 @@ public class UserService {
   public void registerAdmin(AdminDTO adminDTO) {
     User user = new User(adminDTO.getEmail(), Role.ADMIN);
     user.setToken(UUID.randomUUID().toString()); // Generate token
-    userRepository.save(user);
+    userRepo.save(user);
 
     // Send email with password setup link
     emailService.sendPasswordSetupEmail(user.getEmail(), user.getToken());
