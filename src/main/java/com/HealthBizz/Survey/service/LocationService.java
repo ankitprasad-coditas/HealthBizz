@@ -6,7 +6,6 @@ import com.HealthBizz.Survey.dto.LocationDto;
 import com.HealthBizz.Survey.dto.StateDto;
 import com.HealthBizz.Survey.entity.*;
 import com.HealthBizz.Survey.exception.DuplicateDataException;
-import com.HealthBizz.Survey.exception.MissingDataException;
 import com.HealthBizz.Survey.reporsitory.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -48,35 +47,34 @@ public class LocationService {
 
         String type = locationDTO.getType().toString().toLowerCase();
         String name = locationDTO.getName();
-        String parentLocation = locationDTO.getParentLocation();
 
         switch (role.getName()) {
             case "SUPER_ADMIN":
-                return createLocation(type, name, parentLocation);
+                return createLocation(type, name, currentUser);
 
             case "ADMIN":
                 if ("country".equals(type)) {
                     throw new IllegalArgumentException("Admin cannot create a country");
                 }
-                return createLocation(type, name, parentLocation);
+                return createLocation(type, name, currentUser);
 
             case "STATE_HEAD":
                 if ("country".equals(type) || "state".equals(type)) {
                     throw new IllegalArgumentException("State head cannot create a country or state");
                 }
-                return createLocation(type, name, parentLocation);
+                return createLocation(type, name, currentUser);
 
             case "DISTRICT_HEAD":
                 if ("country".equals(type) || "state".equals(type) || "district".equals(type)) {
                     throw new IllegalArgumentException("District head cannot create a country or state or districts");
                 }
-                return createLocation(type, name, parentLocation);
+                return createLocation(type, name, currentUser);
 
             case "TALUKA_HEAD":
                 if ("country".equals(type) || "state".equals(type) || "district".equals(type) || "taluka".equals(type)) {
                     throw new IllegalArgumentException("Taluka head cannot create a country or state or districts or taluka");
                 }
-                return createLocation(type, name, parentLocation);
+                return createLocation(type, name, currentUser);
 
             case "DATA_COLLECTOR":
                 if (!type.isBlank()) {
@@ -89,7 +87,7 @@ public class LocationService {
         }
     }
 
-    private Object createLocation(String type, String name, String parentLocation) {
+    private Object createLocation(String type, String name, User parentUser) {
         switch (type) {
             case "country":
                 if (countryRepo.findByName(name).isPresent()) {
@@ -100,36 +98,46 @@ public class LocationService {
                 return objectMapper.convertValue(countryRepo.save(country), CountryDto.class);
 
             case "state":
-                Country optionalCountry = countryRepo.findByName(parentLocation).orElseThrow(() -> new MissingDataException("Country Doesn't Exists"));
-                if (stateRepo.findByStateNameAndCountryName(name, parentLocation).isPresent()) {
+                if (stateRepo.findByStateNameAndCountryId(name, parentUser.getCountry().getId()).isPresent()) {
                     throw new DuplicateDataException("State Already Exists");
                 }
 
                 State state = new State();
                 state.setName(name);
-                state.setCountry(optionalCountry);
+                state.setCountry(parentUser.getCountry());
                 return objectMapper.convertValue(stateRepo.save(state), StateDto.class);
 
             case "district":
-                State optionalState = stateRepo.findByName(parentLocation).orElseThrow(() -> new MissingDataException("State Doesn't Exists"));
-                if (districtRepo.findByDistrictNameAndStateName(name, parentLocation).isPresent()) {
+                if (districtRepo.findByDistrictNameAndStateId(name, parentUser.getState().getId()).isPresent()) {
                     throw new DuplicateDataException("District Already Exists");
                 }
 
                 District district = new District();
                 district.setName(name);
-                district.setState(optionalState);
-                return objectMapper.convertValue(districtRepo.save(district), DistrictDto.class);
+                district.setState(parentUser.getState());
+                District savedDistrict = districtRepo.save(district);
+                DistrictDto districtDto = objectMapper.convertValue(savedDistrict, DistrictDto.class);
+                districtDto.setStateName(savedDistrict.getState().getName());
+                return districtDto;
 
             case "taluka":
-//                if(talukaRepo.findByName(name).isPresent())
+                if(talukaRepo.findByTalukaNameAndDistrictId(name,parentUser.getDistrict().getId()).isPresent()){
+                    throw new DuplicateDataException("Taluka Already Present");
+                }
+
                 Taluka taluka = new Taluka();
                 taluka.setName(name);
+                taluka.setDistrict(parentUser.getDistrict());
                 return talukaRepo.save(taluka);
 
             case "city":
+                if(cityRepo.findByCityNameAndTalukaId(name,parentUser.getTaluka().getId()).isPresent()){
+                    throw new DuplicateDataException("City Already Present");
+                }
+
                 City city = new City();
                 city.setName(name);
+                city.setTaluka(parentUser.getTaluka());
                 return cityRepo.save(city);
 
             default:

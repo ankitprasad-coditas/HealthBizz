@@ -22,14 +22,6 @@ public class UserDto {
 
     private String role;
 
-    private String countryName ;
-
-    private String stateName ;
-
-    private String districtName;
-
-    private String talukaName;
-
-    private String cityName;
+    private String regionName;
 
 }

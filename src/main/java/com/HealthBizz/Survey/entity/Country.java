@@ -22,6 +22,8 @@ public class Country {
 
     private String name;
 
+    private boolean head=false;
+
     @JsonBackReference
     @OneToMany(mappedBy = "country")
     Set<State> states;

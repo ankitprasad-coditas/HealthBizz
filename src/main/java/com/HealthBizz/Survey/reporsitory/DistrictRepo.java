@@ -12,8 +12,8 @@ import java.util.Optional;
 @Repository
 public interface DistrictRepo extends JpaRepository<District, Long> {
 
-    @Query("SELECT d FROM District d WHERE d.name = :districtName AND d.state.name = :stateName")
-    Optional<District> findByDistrictNameAndStateName(@Param("districtName") String districtName, @Param("stateName") String stateName);
+    @Query("SELECT d FROM District d WHERE d.name = :districtName AND d.state.id = :stateId")
+    Optional<District> findByDistrictNameAndStateId(@Param("districtName") String districtName, @Param("stateId") Long stateId);
 
     Optional<District> findByName(String name);
 

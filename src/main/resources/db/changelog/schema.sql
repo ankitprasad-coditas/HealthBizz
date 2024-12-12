@@ -19,7 +19,8 @@ CREATE TABLE roles_permissions (
 
 CREATE TABLE country (
     id BIGSERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL
+    name VARCHAR(255) NOT NULL,
+    head BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE state (

@@ -15,6 +15,5 @@ public class LocationDto {
 
     private LocationTypes type;
     private String name;
-    private String parentLocation;
 
 }

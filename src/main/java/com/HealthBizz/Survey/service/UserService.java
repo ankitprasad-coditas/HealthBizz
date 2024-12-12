@@ -51,7 +51,15 @@ public class UserService {
 
         Role role = roleRepo.findByName(userDto.getRole()).orElseThrow(() -> new MissingDataException("Role Doesn't Exist"));
 
+        if (isUserHeadOfAnyRegion(userDto.getEmailId())) {
+            throw new UnauthorisedException("User cannot be head of more than one place.");
+        }
+
         Object region = fetchRegionForRole(role.getName(), userDto);
+
+        if (regionAlreadyHasHead(region)) {
+            throw new UnauthorisedException("This region already has a head assigned.");
+        }
 
         User newUser = new User();
         newUser.setName(userDto.getName());
@@ -63,13 +71,16 @@ public class UserService {
         assignRegionToUser(newUser, role.getName(), region);
 
         User savedUser = userRepo.save(newUser);
-        UserDto createdUser = objectMapper.convertValue(savedUser, UserDto.class);
+        setRegionHead(region, true);
+
+        UserDto createdUser = new UserDto();
+        createdUser.setId(savedUser.getId());
+        createdUser.setName(savedUser.getName());
+        createdUser.setEmailId(savedUser.getEmailId());
+        createdUser.setPassword(savedUser.getPassword());
+        createdUser.setContactNumber(savedUser.getContactNumber());
         createdUser.setRole(savedUser.getRole().getName());
-        createdUser.setCityName(savedUser.getCity().getName());
-        createdUser.setTalukaName(savedUser.getTaluka().getName());
-        createdUser.setDistrictName(savedUser.getDistrict().getName());
-        createdUser.setStateName(savedUser.getState().getName());
-        createdUser.setCountryName(savedUser.getCountry().getName());
+        createdUser.setRegionName(getRegionName(savedUser));
         return createdUser;
     }
 
@@ -84,20 +95,61 @@ public class UserService {
         };
     }
 
+    private boolean isUserHeadOfAnyRegion(String emailId) {
+        return userRepo.existsByEmailIdAndIsHeadOfAnyRegion(emailId);
+    }
+
     private Object fetchRegionForRole(String roleName, UserDto userDto) {
         return switch (roleName.toUpperCase()) {
-            case "ADMIN" -> countryRepo.findByName(userDto.getCountryName())
+            case "ADMIN" -> countryRepo.findByName(userDto.getRegionName())
                     .orElseThrow(() -> new MissingDataException("Invalid country name"));
-            case "STATE_HEAD" -> stateRepo.findByName(userDto.getStateName())
+            case "STATE_HEAD" -> stateRepo.findByName(userDto.getRegionName())
                     .orElseThrow(() -> new MissingDataException("Invalid state name"));
-            case "DISTRICT_HEAD" -> districtRepo.findByName(userDto.getDistrictName())
+            case "DISTRICT_HEAD" -> districtRepo.findByName(userDto.getRegionName())
                     .orElseThrow(() -> new MissingDataException("Invalid district name"));
-            case "TALUKA_HEAD" -> talukaRepo.findByName(userDto.getTalukaName())
+            case "TALUKA_HEAD" -> talukaRepo.findByName(userDto.getRegionName())
                     .orElseThrow(() -> new MissingDataException("Invalid taluka name"));
-            case "DATA_COLLECTOR" -> cityRepo.findByName(userDto.getCityName())
+            case "DATA_COLLECTOR" -> cityRepo.findByName(userDto.getRegionName())
                     .orElseThrow(() -> new MissingDataException("Invalid city name"));
             default -> throw new IllegalStateException("Invalid Role Name: " + roleName.toUpperCase());
         };
+    }
+
+    private boolean regionAlreadyHasHead(Object region) {
+        if (region instanceof Country) {
+            return ((Country) region).isHead();
+        } else if (region instanceof State) {
+            return ((State) region).isHead();
+        } else if (region instanceof District) {
+            return ((District) region).isHead();
+        } else if (region instanceof Taluka) {
+            return ((Taluka) region).isHead();
+        } else if (region instanceof City) {
+            return ((City) region).isDataCollector();
+        } else {
+            throw new IllegalStateException("Unknown region type");
+        }
+    }
+
+    private void setRegionHead(Object region, boolean head) {
+        if (region instanceof Country) {
+            ((Country) region).setHead(head);
+            countryRepo.save((Country) region);
+        } else if (region instanceof State) {
+            ((State) region).setHead(head);
+            stateRepo.save((State) region);
+        } else if (region instanceof District) {
+            ((District) region).setHead(head);
+            districtRepo.save((District) region);
+        } else if (region instanceof Taluka) {
+            ((Taluka) region).setHead(head);
+            talukaRepo.save((Taluka) region);
+        } else if (region instanceof City) {
+            ((City) region).setDataCollector(head);
+            cityRepo.save((City) region);
+        } else {
+            throw new IllegalStateException("Unknown region type");
+        }
     }
 
     private void assignRegionToUser(User user, String roleName, Object region) {
@@ -108,6 +160,22 @@ public class UserService {
             case "TALUKA_HEAD" -> user.setTaluka((Taluka) region);
             case "DATA_COLLECTOR" -> user.setCity((City) region);
             default -> throw new IllegalStateException("Invalid Role Name: " + roleName.toUpperCase());
+        }
+    }
+
+    private String getRegionName(User user) {
+        if (user.getCountry() != null) {
+            return user.getCountry().getName();
+        } else if (user.getState() != null) {
+            return user.getState().getName();
+        } else if (user.getDistrict() != null) {
+            return user.getDistrict().getName();
+        } else if (user.getTaluka() != null) {
+            return user.getTaluka().getName();
+        } else if (user.getCity() != null) {
+            return user.getCity().getName();
+        } else {
+            return "N/A";
         }
     }
 }

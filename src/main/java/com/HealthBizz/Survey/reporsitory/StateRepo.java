@@ -13,8 +13,8 @@ import java.util.Optional;
 @Repository
 public interface StateRepo extends JpaRepository<State, Long> {
 
-    @Query("SELECT d FROM State d WHERE d.name = :stateName AND d.country.name = :countryName")
-    Optional<District> findByStateNameAndCountryName(@Param("stateName") String stateName, @Param("countryName") String countryNames);
+    @Query("SELECT s FROM State s WHERE s.name = :stateName AND s.country.id = :countryId")
+    Optional<State> findByStateNameAndCountryId(@Param("stateName") String stateName, @Param("countryId") Long countryId);
 
     Optional<State> findByName(String name);
 
