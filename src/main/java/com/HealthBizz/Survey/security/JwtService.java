@@ -16,7 +16,7 @@ import java.util.function.Function;
 public class JwtService {
 
     private static final String SECRET_KEY = "357638792F423F4428472B4B6250655368566D597133743677397A2443264629";
-    private static final long ACCESS_EXPIRATION_TIME = 1000 * 60 * 20;
+    private static final long ACCESS_EXPIRATION_TIME = 1000 * 60 * 60 * 1;
     private static final long REFRESH_EXPIRATION_TIME = 1000 * 60 * 60 * 24 * 2;
 
     public String generateAccessToken(String username) {

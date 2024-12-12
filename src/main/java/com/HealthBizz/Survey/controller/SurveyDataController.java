@@ -2,6 +2,7 @@ package com.HealthBizz.Survey.controller;
 
 import com.HealthBizz.Survey.dto.ApiResponseDto;
 import com.HealthBizz.Survey.dto.SurveyDataDto;
+import com.HealthBizz.Survey.entity.SurveyData;
 import com.HealthBizz.Survey.service.SurveyDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,19 +21,24 @@ public class SurveyDataController {
 
     @PostMapping("/newSurveyData")
 //    @PreAuthorize()
-    public ResponseEntity<ApiResponseDto<SurveyDataDto>> uploadData(@RequestBody SurveyDataDto surveyDataDto){
+    public ResponseEntity<ApiResponseDto<SurveyDataDto>> uploadData(@RequestBody SurveyDataDto surveyDataDto) {
         SurveyDataDto savedData = surveyDataService.newData(surveyDataDto);
-        ApiResponseDto<SurveyDataDto> response = new ApiResponseDto<>(savedData, HttpStatus.CREATED.value(),"SurveyData Saved Successfully");
-        return new ResponseEntity<>(response,HttpStatus.CREATED);
+        ApiResponseDto<SurveyDataDto> response = new ApiResponseDto<>(savedData, HttpStatus.CREATED.value(), "SurveyData Saved Successfully");
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @GetMapping("/allSurveyedData")
-    public ResponseEntity<ApiResponseDto<List<SurveyDataDto>>> allSurveyData(){
-        return null;
+    public ResponseEntity<ApiResponseDto<List<SurveyDataDto>>> allSurveyData() {
+        List<SurveyDataDto> surveyDataList = surveyDataService.allCollectedData();
+        ApiResponseDto<List<SurveyDataDto>> apiResponseDto = new ApiResponseDto<>(surveyDataList, HttpStatus.OK.value(), "Data Fetched Successfully");
+        return new ResponseEntity<>(apiResponseDto, HttpStatus.OK);
     }
 
-    @GetMapping("/surveyedData/{id}")
-    public ResponseEntity<ApiResponseDto<List<SurveyDataDto>>> allSurveyData(@PathVariable Long id){
-        return null;
+
+    @GetMapping("/surveyedData")
+    public ResponseEntity<ApiResponseDto<List<SurveyDataDto>>> allSurveyDataById() {
+        List<SurveyDataDto> surveyDataList = surveyDataService.dataByCollectorId();
+        ApiResponseDto<List<SurveyDataDto>> apiResponseDto = new ApiResponseDto<>(surveyDataList, HttpStatus.OK.value(), "Data Fetched Successfully");
+        return new ResponseEntity<>(apiResponseDto, HttpStatus.OK);
     }
 }

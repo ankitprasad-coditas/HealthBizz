@@ -6,13 +6,16 @@ import com.HealthBizz.Survey.exception.MissingDataException;
 import com.HealthBizz.Survey.exception.UnauthorisedException;
 import com.HealthBizz.Survey.reporsitory.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
     private final RoleRepo roleRepo;
@@ -25,7 +28,7 @@ public class UserService {
     private final ObjectMapper objectMapper;
     private final BCryptPasswordEncoder passwordEncoder;
 
-    @Autowired
+    /*@Autowired
     public UserService(RoleRepo roleRepo, UserRepo userRepo, CountryRepo countryRepo, StateRepo stateRepo, DistrictRepo districtRepo, TalukaRepo talukaRepo, CityRepo cityRepo, ObjectMapper objectMapper, BCryptPasswordEncoder passwordEncoder) {
         this.roleRepo = roleRepo;
         this.userRepo = userRepo;
@@ -36,7 +39,7 @@ public class UserService {
         this.cityRepo = cityRepo;
         this.objectMapper = objectMapper;
         this.passwordEncoder = passwordEncoder;
-    }
+    }*/
 
 
     // Create New User

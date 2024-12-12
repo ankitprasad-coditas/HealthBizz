@@ -1,5 +1,6 @@
 package com.HealthBizz.Survey.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,7 +13,9 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class SurveyDataDto {
+    @JsonIgnore
     private Long id;
+
     private Long dataCollectorId;
     private String businessName;
     private String businessType;

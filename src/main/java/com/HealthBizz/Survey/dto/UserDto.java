@@ -16,7 +16,7 @@ public class UserDto {
 
     private String emailId;
 
-    private String password;
+    private String password = "test123";
 
     private Long contactNumber;
 
