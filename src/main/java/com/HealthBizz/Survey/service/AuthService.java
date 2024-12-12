@@ -1,10 +1,11 @@
-package com.HealthBizz.Survey.security;
+package com.HealthBizz.Survey.service;
 
 import com.HealthBizz.Survey.dto.AuthRequestDto;
 import com.HealthBizz.Survey.dto.TokenResponseDto;
 import com.HealthBizz.Survey.entity.User;
 import com.HealthBizz.Survey.exception.UnauthorisedException;
 import com.HealthBizz.Survey.reporsitory.UserRepo;
+import com.HealthBizz.Survey.security.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -32,7 +33,7 @@ public class AuthService {
             String refreshToken = jwtService.generateRefreshToken(authRequestDto.getEmailId());
             User user = userRepo.findByEmailId(authRequestDto.getEmailId()).get();
             String name = user.getName();
-            String role = String.valueOf(user.getRole());
+            String role = String.valueOf(user.getRole().getName());
             TokenResponseDto tokenResponseDto = TokenResponseDto.builder()
                     .accessToken(accessToken)
                     .refreshToken(refreshToken)

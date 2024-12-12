@@ -1,14 +1,19 @@
 package com.HealthBizz.Survey.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.Set;
 
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
 public class Country {
 
     @Id
@@ -17,41 +22,12 @@ public class Country {
 
     private String name;
 
+    @JsonBackReference
     @OneToMany(mappedBy = "country")
     Set<State> states;
 
+    @JsonBackReference
     @OneToMany(mappedBy = "country")
     private Set<User> users;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Set<State> getStates() {
-        return states;
-    }
-
-    public void setStates(Set<State> states) {
-        this.states = states;
-    }
-
-    public Set<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(Set<User> users) {
-        this.users = users;
-    }
 }

@@ -6,6 +6,7 @@ import com.HealthBizz.Survey.service.SurveyDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,6 +19,7 @@ public class SurveyDataController {
     private SurveyDataService surveyDataService;
 
     @PostMapping("/newSurveyData")
+//    @PreAuthorize()
     public ResponseEntity<ApiResponseDto<SurveyDataDto>> uploadData(@RequestBody SurveyDataDto surveyDataDto){
         SurveyDataDto savedData = surveyDataService.newData(surveyDataDto);
         ApiResponseDto<SurveyDataDto> response = new ApiResponseDto<>(savedData, HttpStatus.CREATED.value(),"SurveyData Saved Successfully");

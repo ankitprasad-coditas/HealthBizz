@@ -1,29 +1,20 @@
 package com.HealthBizz.Survey.dto;
 
+import com.HealthBizz.Survey.enums.LocationTypes;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
 public class LocationDto {
 
-    private String type;
+    private LocationTypes type;
     private String name;
+    private String parentLocation;
 
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 }

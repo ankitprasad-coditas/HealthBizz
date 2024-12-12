@@ -1,3 +1,4 @@
+/*
 package com.HealthBizz.Survey.enums;
 
 public enum Roles {
@@ -8,3 +9,4 @@ public enum Roles {
     TALUKA_HEAD,
     DATA_COLLECTOR
 }
+*/

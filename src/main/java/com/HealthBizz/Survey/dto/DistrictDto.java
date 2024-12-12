@@ -1,9 +1,13 @@
 package com.HealthBizz.Survey.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class DistrictDto {
@@ -12,27 +16,4 @@ public class DistrictDto {
     private String name;
     private String stateName;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getStateName() {
-        return stateName;
-    }
-
-    public void setStateName(String stateName) {
-        this.stateName = stateName;
-    }
 }

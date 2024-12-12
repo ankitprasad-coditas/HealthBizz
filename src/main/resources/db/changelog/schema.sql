@@ -1,3 +1,22 @@
+
+CREATE TABLE roles (
+    id serial PRIMARY KEY,
+    name varchar(50)
+);
+
+CREATE TABLE permissions (
+    id serial PRIMARY KEY,
+    name varchar(30)
+);
+
+CREATE TABLE roles_permissions (
+    role_id int,
+    permission_id int,
+    FOREIGN KEY (role_id) REFERENCES roles(id),
+    FOREIGN KEY (permission_id) REFERENCES permissions(id),
+    PRIMARY KEY (role_id, permission_id)
+);
+
 CREATE TABLE country (
     id BIGSERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL
@@ -6,6 +25,7 @@ CREATE TABLE country (
 CREATE TABLE state (
     id BIGSERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
+    head BOOLEAN DEFAULT FALSE,
     country_id BIGINT NOT NULL,
     FOREIGN KEY (country_id) REFERENCES country(id) ON DELETE CASCADE
 );
@@ -13,6 +33,7 @@ CREATE TABLE state (
 CREATE TABLE district (
     id BIGSERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
+    head BOOLEAN DEFAULT FALSE,
     state_id BIGINT NOT NULL,
     FOREIGN KEY (state_id) REFERENCES state(id) ON DELETE CASCADE
 );
@@ -20,6 +41,7 @@ CREATE TABLE district (
 CREATE TABLE taluka (
     id BIGSERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
+    head BOOLEAN DEFAULT FALSE,
     district_id BIGINT NOT NULL,
     FOREIGN KEY (district_id) REFERENCES district(id) ON DELETE CASCADE
 );
@@ -27,6 +49,7 @@ CREATE TABLE taluka (
 CREATE TABLE city (
     id BIGSERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
+    data_collector BOOLEAN DEFAULT FALSE,
     taluka_id BIGINT NOT NULL,
     FOREIGN KEY (taluka_id) REFERENCES taluka(id) ON DELETE CASCADE
 );
@@ -37,8 +60,7 @@ CREATE TABLE users (
     email_id VARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL,
     contact_number BIGINT,
-    role VARCHAR(50) NOT NULL,
-    location VARCHAR(255),
+    role_id int,
     country_id BIGINT,
     state_id BIGINT,
     district_id BIGINT,
