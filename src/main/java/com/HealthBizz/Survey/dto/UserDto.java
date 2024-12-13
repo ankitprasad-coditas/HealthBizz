@@ -1,5 +1,6 @@
 package com.HealthBizz.Survey.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,6 +17,7 @@ public class UserDto {
 
     private String emailId;
 
+    @JsonIgnore
     private String password = "test123";
 
     private Long contactNumber;

@@ -24,6 +24,7 @@ public class TalukaService {
         List<TalukaDto> talukaList = allTaluka.stream()
                 .map(taluka -> {
                     TalukaDto theTaluka = objectMapper.convertValue(taluka,TalukaDto.class);
+                    theTaluka.setDistrictName(taluka.getDistrict().getName());
                     return theTaluka;
                 })
                 .collect(Collectors.toList());

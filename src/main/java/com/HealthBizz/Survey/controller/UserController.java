@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/user")
 @CrossOrigin
@@ -25,20 +27,31 @@ public class UserController {
         this.userService = userService;
     }
 
+    // User Login
     @PostMapping("/login")
-    public ResponseEntity<ApiResponseDto<TokenResponseDto>> userLogin(@RequestBody AuthRequestDto authRequestDto){
+    public ResponseEntity<ApiResponseDto<TokenResponseDto>> userLogin(@RequestBody AuthRequestDto authRequestDto) {
         ApiResponseDto<TokenResponseDto> response = new ApiResponseDto<>(authService.login(authRequestDto), HttpStatus.OK.value(), "Logged In Successfully");
-        return new ResponseEntity<>(response,HttpStatus.OK);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    // Create User
     @PostMapping("/createUser")
-    public ResponseEntity<ApiResponseDto<UserDto>> createUser(@RequestBody UserDto userDto){
-        ApiResponseDto<UserDto> response = new ApiResponseDto<>(userService.createUser(userDto),HttpStatus.CREATED.value(), "User Created Successfully");
-        return new ResponseEntity<>(response,HttpStatus.CREATED);
+    public ResponseEntity<ApiResponseDto<UserDto>> createUser(@RequestBody UserDto userDto) {
+        ApiResponseDto<UserDto> response = new ApiResponseDto<>(userService.createUser(userDto), HttpStatus.CREATED.value(), "User Created Successfully");
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    // Update User
-    // Get user by Id
+    // Get user by ID
+    @GetMapping("/users")
+    public List<UserDto> getAllUsers() {
+        return userService.getAllUsers();
+    }
+
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<String> deleteUser(@PathVariable Long userId) {
+        userService.deleteUser(userId);
+        return ResponseEntity.ok("User deleted successfully");
+    }
 
 
 }

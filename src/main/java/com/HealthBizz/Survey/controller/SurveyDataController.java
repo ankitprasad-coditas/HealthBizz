@@ -20,7 +20,6 @@ public class SurveyDataController {
     private SurveyDataService surveyDataService;
 
     @PostMapping("/newSurveyData")
-//    @PreAuthorize()
     public ResponseEntity<ApiResponseDto<SurveyDataDto>> uploadData(@RequestBody SurveyDataDto surveyDataDto) {
         SurveyDataDto savedData = surveyDataService.newData(surveyDataDto);
         ApiResponseDto<SurveyDataDto> response = new ApiResponseDto<>(savedData, HttpStatus.CREATED.value(), "SurveyData Saved Successfully");

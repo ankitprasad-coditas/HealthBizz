@@ -37,9 +37,10 @@ public class LocationController {
     }
 
     @GetMapping("/regionList")
-    public ResponseEntity<List<?>> getRegionListByRole(@RequestParam String roleName){
+    public ResponseEntity<ApiResponseDto<List<?>>> getRegionListByRole(@RequestParam String roleName){
         List<?> regionList = locationService.getRegionByRole(roleName);
-        return ResponseEntity.ok(regionList);
+        ApiResponseDto<List<?>> response = new ApiResponseDto<>(regionList,HttpStatus.OK.value(),"Region Fetched Successfully");
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
     @GetMapping("/allCountries")

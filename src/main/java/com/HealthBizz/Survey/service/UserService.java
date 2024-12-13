@@ -4,15 +4,20 @@ import com.HealthBizz.Survey.dto.UserDto;
 import com.HealthBizz.Survey.entity.*;
 import com.HealthBizz.Survey.exception.MissingDataException;
 import com.HealthBizz.Survey.exception.UnauthorisedException;
+import com.HealthBizz.Survey.mapper.UserMapper;
 import com.HealthBizz.Survey.reporsitory.*;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -25,21 +30,9 @@ public class UserService {
     private final DistrictRepo districtRepo;
     private final TalukaRepo talukaRepo;
     private final CityRepo cityRepo;
-    private final ObjectMapper objectMapper;
+    private final UserMapper userMapper;
+    private final JavaMailSender javaMailSender;
     private final BCryptPasswordEncoder passwordEncoder;
-
-    /*@Autowired
-    public UserService(RoleRepo roleRepo, UserRepo userRepo, CountryRepo countryRepo, StateRepo stateRepo, DistrictRepo districtRepo, TalukaRepo talukaRepo, CityRepo cityRepo, ObjectMapper objectMapper, BCryptPasswordEncoder passwordEncoder) {
-        this.roleRepo = roleRepo;
-        this.userRepo = userRepo;
-        this.countryRepo = countryRepo;
-        this.stateRepo = stateRepo;
-        this.districtRepo = districtRepo;
-        this.talukaRepo = talukaRepo;
-        this.cityRepo = cityRepo;
-        this.objectMapper = objectMapper;
-        this.passwordEncoder = passwordEncoder;
-    }*/
 
 
     // Create New User
@@ -73,6 +66,8 @@ public class UserService {
 
         assignRegionToUser(newUser, role.getName(), region);
 
+        sendDefaultPasswordEmail(newUser, role.getName());
+
         User savedUser = userRepo.save(newUser);
         setRegionHead(region, true);
 
@@ -80,7 +75,7 @@ public class UserService {
         createdUser.setId(savedUser.getId());
         createdUser.setName(savedUser.getName());
         createdUser.setEmailId(savedUser.getEmailId());
-        createdUser.setPassword(savedUser.getPassword());
+//        createdUser.setPassword(savedUser.getPassword());
         createdUser.setContactNumber(savedUser.getContactNumber());
         createdUser.setRole(savedUser.getRole().getName());
         createdUser.setRegionName(getRegionName(savedUser));
@@ -181,4 +176,58 @@ public class UserService {
             return "N/A";
         }
     }
+
+    // Mail Send
+    private void sendDefaultPasswordEmail(User user, String roleName) {
+        try {
+            String defaultPassword = "test123";
+            MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage);
+
+            helper.setTo(user.getEmailId());
+            helper.setSubject("Welcome To HealthBizz");
+            helper.setText(String.format(
+                    "Welcome %s,\n\nYour account has been created!!\nYour Role is: %s.\nYour default password is: %s\n",
+                    user.getName(), roleName, defaultPassword
+            ));
+
+            javaMailSender.send(mimeMessage);
+        } catch (MessagingException e) {
+            throw new RuntimeException("Failed to send email", e);
+        }
+    }
+
+    // Get All Users
+    public List<UserDto> getAllUsers() {
+        List<User> users = userRepo.findAll();
+
+        return users.stream()
+                .map(userMapper::convertToDto)
+                .collect(Collectors.toList());
+    }
+
+
+    //Delete User
+    public void deleteUser(Long userId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User currentUser = userRepo.findByEmailId(authentication.getName()).orElseThrow();
+        Role currentUserRole = currentUser.getRole();
+
+        if (!canDeleteUser(currentUserRole)) {
+            throw new UnauthorisedException("Unauthorized: You do not have permission to delete users.");
+        }
+
+        User userToDelete = userRepo.findById(userId).orElseThrow(() -> new MissingDataException("User not found"));
+
+        if (isUserHeadOfAnyRegion(userToDelete.getEmailId())) {
+            throw new UnauthorisedException("User cannot be deleted as they are head of a region.");
+        }
+
+        userRepo.delete(userToDelete);
+    }
+
+    private boolean canDeleteUser(Role currentUserRole) {
+        return currentUserRole.getName().equalsIgnoreCase("SUPER_ADMIN");
+    }
+
 }

@@ -25,7 +25,7 @@ public class District {
     private boolean head=false;
 
     @JsonManagedReference
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "state_id", nullable = false)
     private State state;
 

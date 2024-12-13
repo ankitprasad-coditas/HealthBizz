@@ -36,8 +36,13 @@ public class SecurityConfig {
             "/swagger-resources/**",
             "/swagger-resources",
             "/api/v1/user/**",
-//            "/api/v1/user/createUser",
             "/api/v1/data/**",
+            "/api/v1/location/allCountries",
+            "/api/v1/location/allStates",
+            "/api/v1/location/allDistricts",
+            "/api/v1/location/allTalukas",
+            "/api/v1/location/allCities"
+//            "/api/v1/location/regionLIst"
     };
 
     @Bean

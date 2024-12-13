@@ -24,6 +24,7 @@ public class LocationService {
 
     //    @Autowired
     private final CountryRepo countryRepo;
+
     //    @Autowired
     private final StateRepo stateRepo;
 
